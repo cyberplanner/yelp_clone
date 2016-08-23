@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   # root 'welcome#index'
 
 get 'restaurants' => 'restaurants#index'
-resources :restaurants
+  resources :restaurants do
+    resources :reviews
+  end
 
 end
   # Example of regular route:

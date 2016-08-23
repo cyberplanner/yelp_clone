@@ -5,6 +5,16 @@
         <p>
           <%= restaurant.description %>
         </p>
+        <ul>
+          <% restaurant.reviews.all.each do |r| %>
+            <li>
+              <%= r.thoughts %>
+            </li>
+          <% end %>
+        </ul>
+
+        <br>
+        <%= link_to "Review #{restaurant.name}", new_restaurant_review_path(restaurant) %>
       <br>
       <%= link_to "Edit #{restaurant.name}", edit_restaurant_path(restaurant)  %>
       <br>
