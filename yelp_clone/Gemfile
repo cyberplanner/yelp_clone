@@ -1,10 +1,9 @@
 source 'https://rubygems.org'
 
+gem 'dotenv-rails', :require => 'dotenv/rails-now'
+gem 'devise'
 gem 'omniauth-facebook'
 
-gem 'dotenv-rails'
-
-gem 'devise'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.7.1'
