@@ -14,7 +14,6 @@ get 'restaurants' => 'restaurants#index'
   resources :restaurants do
     resources :reviews
   end
-
 end
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
