@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 feature 'restaurants' do
+  before do
+    User.create email: 'sal@email.com', password: 'secret', password_confirmation: 'secret'
+    User.create email: 'giancarlo@email.com', password: 'secret1', password_confirmation: 'secret1'
+  end
+
   context 'no restaurants have been added' do
     scenario 'should display a prompt to add restaurants' do
       visit '/restaurants'
@@ -11,7 +16,7 @@ feature 'restaurants' do
 
     context 'restaurants have been added' do
       before do
-        Restaurant.create(name: 'KFC')
+        Restaurant.create name: 'KFC', description: 'Deep fried goodness'
       end
 
       scenario 'displays restaurants' do
@@ -23,10 +28,8 @@ feature 'restaurants' do
 
     context 'creating restaurants' do
       scenario 'prompt user to fill out a form, then displays the new restaurant' do
-        visit '/restaurants'
-        click_link 'Add a restaurant'
-        fill_in 'Name',  with: 'KFC'
-        click_button 'Create Restaurant'
+        sign_in
+        add_restaurant(name: 'KFC')
         expect(page).to have_content 'KFC'
         expect(current_path).to eq '/restaurants'
       end
@@ -35,10 +38,8 @@ feature 'restaurants' do
 
     context 'an invalid restaurant' do
       scenario 'does not let you submit a name that is too short' do
-        visit '/restaurants'
-        click_link 'Add a restaurant'
-        fill_in 'Name', with: 'kf'
-        click_button 'Create Restaurant'
+        sign_in
+        add_restaurant(name: 'kf')
         expect(page).not_to have_css 'h2', text: 'kf'
         expect(page).to have_content 'error'
       end
@@ -57,10 +58,11 @@ feature 'restaurants' do
     end
 
     context 'editing restaurants' do
-      before { Restaurant.create name: 'KFC', description: 'Deep fried goodness' }
-
+      before do
+        Restaurant.create name: 'KFC', description: 'Deep fried goodness'
+      end
       scenario 'let user edit a restaurant' do
-        visit '/restaurants'
+        sign_in
         click_link 'Edit KFC'
         fill_in 'Name', with: 'Kentucky Fried Chicken'
         fill_in 'Description', with: 'Deep fried goodness'
@@ -72,16 +74,43 @@ feature 'restaurants' do
     end
 
     context 'deleting restaurants' do
-
-      before { Restaurant.create name: 'KFC', description: 'Deep fried goodness' }
-
+      before do
+        Restaurant.create name: 'KFC', description: 'Deep fried goodness'
+      end
       scenario 'removes a restaurant when a user clicks a delete link' do
-        visit '/restaurants'
+        sign_in
         click_link 'Delete KFC'
         expect(page).not_to have_content 'KFC'
         expect(page).to have_content 'Restaurant deleted successfully'
       end
     end
 
+    context 'user not logged in' do
+      scenario 'cannot create restaurants' do
+        visit '/restaurants'
+        click_link 'Add a restaurant'
+        expect(page).to have_content 'Log in'
+      end
+    end
 
+    context 'user cannot edit someone else\'s restaurant' do
+      scenario 'cannot edit a restaurant' do
+        sign_in(email: 'sal@email.com', password: 'secret')
+        add_restaurant(name: 'KFC')
+        sign_out
+        sign_in(email: 'giancarlo@email.com', password: 'secret1')
+        click_link 'Edit KFC'
+        expect(page).to have_content "You cannot edit someone else's restaurant!"
+      end
+    end
+    context 'user cannot delete someone else\'s restaurant' do
+      scenario 'cannot delele a restaurant' do
+        sign_in(email: 'sal@email.com', password: 'secret')
+        add_restaurant(name: 'KFC')
+        sign_out
+        sign_in(email: 'giancarlo@email.com', password: 'secret1')
+        click_link 'Delete KFC'
+        expect(page).to have_content "You cannot delete someone else's restaurant!"
+      end
+    end
 end
