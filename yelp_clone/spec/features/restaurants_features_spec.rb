@@ -8,7 +8,7 @@ feature 'restaurants' do
 
   context 'no restaurants have been added' do
     scenario 'should display a prompt to add restaurants' do
-      visit '/restaurants'
+      sign_in
       expect(page).to have_content 'No restaurants yet'
       expect(page).to have_link 'Add a restaurant'
     end
@@ -25,6 +25,7 @@ feature 'restaurants' do
         expect(page).not_to have_content('No restaurants yet')
       end
     end
+
 
     context 'creating restaurants' do
       scenario 'prompt user to fill out a form, then displays the new restaurant' do
@@ -93,24 +94,23 @@ feature 'restaurants' do
       end
     end
 
-    context 'user cannot edit someone else\'s restaurant' do
-      scenario 'cannot edit a restaurant' do
-        sign_in(email: 'sal@email.com', password: 'secret')
-        add_restaurant(name: 'KFC')
-        sign_out
-        sign_in(email: 'giancarlo@email.com', password: 'secret1')
-        click_link 'Edit KFC'
-        expect(page).to have_content "You cannot edit someone else's restaurant!"
-      end
-    end
-    context 'user cannot delete someone else\'s restaurant' do
-      scenario 'cannot delele a restaurant' do
-        sign_in(email: 'sal@email.com', password: 'secret')
-        add_restaurant(name: 'KFC')
-        sign_out
-        sign_in(email: 'giancarlo@email.com', password: 'secret1')
-        click_link 'Delete KFC'
-        expect(page).to have_content "You cannot delete someone else's restaurant!"
-      end
-    end
+    # context "While signed out" do
+    #   scenario 'cannot edit a restaurant' do
+    #     sign_in(email: 'sal@email.com', password: 'secret')
+    #     add_restaurant(name: 'KFC')
+    #     sign_out
+    #     sign_in(email: 'giancarlo@email.com', password: 'secret1')
+    #     click_link 'Edit KFC'
+    #     expect(page).to have_content "You cannot edit someone else's restaurant!"
+    #   end
+    #
+    #   scenario 'cannot delele a restaurant' do
+    #     sign_in(email: 'sal@email.com', password: 'secret')
+    #     add_restaurant(name: 'KFC')
+    #     sign_out
+    #     sign_in(email: 'giancarlo@email.com', password: 'secret1')
+    #     click_link 'Delete KFC'
+    #     expect(page).to have_content "You cannot delete someone else's restaurant!"
+    #   end
+    # end
 end

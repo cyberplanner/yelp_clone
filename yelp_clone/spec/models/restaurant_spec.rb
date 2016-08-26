@@ -11,4 +11,14 @@ describe Restaurant, type: :model do
     restaurant = Restaurant.new(name: "Moe's Tavren")
     expect(restaurant).to have(1).error_on(:name)
   end
+
+  it "is should have many reviews" do
+    should have_many(:reviews)
+  end
+
+  it { should belong_to(:user) }
+
+
+  it { should have_many(:reviews) }
+
 end
